@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace ="com.project42.sai.bucketList.BucketListSqlMapper">
+    <!-- 작성 -->
+      <insert id="insertBucketItem" parameterType="com.project42.sai.bucketList.BucketListDto">
+        INSERT INTO bucket_list(
+          couple_id, title, content, created_by
+        ) VALUES(
+          #{coupleId}, #{title}, #{content}, #{createdBy}
+        )
+      </insert>
+    <!-- 미완료 먼저, 그 다음에 최신순 리스트 출력-->
+      <select id="selectBucketItemsByCoupleId" resultType="com.project42.sai.bucketList.BucketListDto">
+        SELECT id,
+          couple_id AS coupleId,
+          title,
+          content,
+          created_by AS createdBy,
+          is_complete  AS isComplete,
+          done_at AS doneAt,
+          created_at  AS createdAt
+        FROM bucket_list
+        WHERE couple_id = #{coupleId}
+        ORDER BY is_complete ASC, created_at DESC
+      </select>
+    <!-- 본인이 쓴 버킷리스트 출력 -->
+    <select id="selectBucketItemById" parameterType="long" resultType="com.project42.sai.bucketList.BucketListDto">
+      SELECT id,
+            couple_id    AS coupleId,
+            title,
+            content,
+            created_by   AS createdBy,
+            is_complete  AS isComplete,
+            done_at      AS doneAt,
+            created_at   AS createdAt
+      FROM bucket_list
+      WHERE id = #{id}
+    </select>
+    
+    <!-- 이룬 버킷리스트 업데이트 -->
+    <update id="updateBucketCompleteStatus">
+      UPDATE bucket_list 
+      SET is_complete =#{isComplete},
+          done_at = #{doneAt}
+      WHERE id = #{id}
+    </update>
+    <!-- 5. 버킷리스트 항목 삭제 -->
+    <delete id="deleteBucketItem" parameterType="long">
+      DELETE FROM bucket_list
+      WHERE id = #{id}
+    </delete>
+</mapper>

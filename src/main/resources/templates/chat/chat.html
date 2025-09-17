@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>커플 채팅</title>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+    <style>
+        body {
+            font-family: 'Apple SD Gothic Neo', sans-serif;
+            margin: 0;
+            background: #fff0f6;
+        }
+
+        #chat-container {
+            max-width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: white;
+        }
+
+        #chat-header {
+            padding: 14px;
+            background: linear-gradient(to right, #ff99cc, #ffccff);
+            font-weight: bold;
+            text-align: center;
+            color: white;
+            font-size: 30px;
+            border-bottom: 1px solid #eee;
+        }
+
+        #chat-box {
+            flex: 1;
+            padding: 12px;
+            overflow-y: auto;
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            background: #fffafc;
+        }
+
+        #chat-box li {
+            display: flex;
+            flex-direction: column;
+            max-width: 75%;
+            font-size: 16px;
+            line-height: 1.5;
+            word-break: break-word;
+            padding: 0 4px;
+        }
+
+        /* 내 메시지 */
+        .my-message {
+            align-self: flex-end;
+            background: #ffe6f0;
+            color: #333;
+            border-radius: 16px 16px 0 16px;
+            padding: 10px 14px;
+            box-shadow: 0 2px 6px rgba(255, 105, 180, 0.2);
+        }
+
+        .other-message {
+            align-self: flex-start;
+            background: #e6f7ff;
+            color: #333;
+            border-radius: 16px 16px 16px 0;
+            padding: 10px 14px;
+        }
+
+        /* 닉네임 */
+        .nickname {
+            font-size: 12px;
+            font-weight: 500;
+            color: #777;
+            margin-bottom: 4px;
+        }
+
+        .meta {
+            font-size: 10px;
+            color: #aaa;
+            text-align: right;
+            margin-top: 4px;
+        }
+
+        #chat-input {
+            display: flex;
+            border-top: 1px solid #ddd;
+            background: #fdf0f7;
+        }
+
+        #inputMsg {
+            flex: 1;
+            font-size: 20px;
+            padding: 12px;
+            border: none;
+            outline: none;
+            background: transparent;
+        }
+
+        #sendBtn {
+            width: 70px;
+            font-size: 15px;
+            background: #ff66aa;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        @media (max-width: 500px) {
+            #chat-box li {
+                width: fit-content;
+                max-width: 80%;
+                /* 너무 길지 않게 */
+                word-wrap: break-word;
+            }
+
+            .nickname {
+                font-size: 11px;
+            }
+
+            .meta {
+                font-size: 10px;
+            }
+
+            #inputMsg {
+                font-size: 16px;
+            }
+
+            #sendBtn {
+                font-size: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="chat-container">
+        <div id="chat-header">💬 커플 채팅방</div>
+        <ul id="chat-box"></ul>
+        <div id="chat-input">
+            <input type="text" id="inputMsg" placeholder="메시지를 입력하세요" />
+            <button id="sendBtn" onclick="sendMessage()">전송</button>
+        </div>
+    </div>
+
+    <script>
+        let coupleId, senderId, nickname;
+        let stompClient;
+        const chatBox = document.getElementById("chat-box");
+
+        // 채팅 정보 불러오기
+        fetch('/chat/info')
+            .then(res => res.json())
+            .then(data => {
+                coupleId = data.coupleId;
+                senderId = data.userId;
+                nickname = data.nickname;
+                if (!coupleId) {
+                    alert("커플 정보가 없습니다.");
+                    return;
+                }
+                connectWebSocket();
+                loadChatHistory();
+            });
+
+        // WebSocket 연결
+        function connectWebSocket() {
+            const socket = new SockJS("/ws-chat");
+            stompClient = Stomp.over(socket);
+            stompClient.connect({}, () => {
+                stompClient.subscribe("/topic/room/" + coupleId, (message) => {
+                    console.log("메시지 수신:", message.body);
+                    const msg = JSON.parse(message.body);
+                    appendMessage(msg);
+                });
+            });
+        }
+
+        // enter 키로 메세지 전송
+        document.getElementById("inputMsg").addEventListener("keydown", function (e) {
+            if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        })
+
+        // 메시지 전송
+        function sendMessage() {
+            const input = document.getElementById("inputMsg");
+            if (!input.value.trim()) return;
+            const msg = {
+                coupleId: coupleId,
+                senderUserId: senderId,
+                senderNickname: nickname,
+                messageType: "TEXT",
+                content: input.value
+            };
+            stompClient.send("/app/chat.sendMessage", {}, JSON.stringify(msg));
+
+            input.value = "";
+        }
+
+        // 메시지 출력
+        function appendMessage(msg) {
+            const time = new Date(msg.sentAt).toLocaleTimeString();
+            const isMine = msg.senderUserId === senderId;
+
+            const li = document.createElement("li");
+            li.className = isMine ? "my-message" : "other-message";
+
+            li.innerHTML = `
+                <div class="nickname">${msg.senderNickname}</div>
+                <div>${msg.content}</div>
+                <div class="meta">${time}${isMine && msg.isRead ? ' · 읽음' : ''}</div>
+            `;
+
+            chatBox.appendChild(li);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        // 과거 메시지 불러오기
+        function loadChatHistory() {
+            console.log("📦 채팅 기록 요청 시작");
+
+            fetch("/chat/history/" + coupleId)
+                .then(res => res.json())
+                .then(data => {
+                    console.log("📦 채팅 기록 응답:", data);
+                    chatBox.innerHTML = "";
+                    data.forEach(msg => {
+                        console.log("💬 과거 메시지 출력:", msg);
+                        appendMessage(msg);
+                    });
+                    markAsRead();
+                });
+        }
+
+        // 읽음 처리
+        function markAsRead() {
+            fetch("/chat/read/" + coupleId, { method: "POST" });
+        }
+    </script>
+
+</body>
+
+</html>

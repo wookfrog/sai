@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.project42.sai.notification.NotificationMapper">
+    <insert id="insert">
+        INSERT INTO notification
+        (user_id, type, title, message, target_id, is_read, link_url, read_at)
+        VALUES
+        (#{userId}, #{type}, #{title}, #{message}, #{targetId}, FALSE, #{linkUrl}, NULL)
+    </insert>
+    <select id="selectRecent" resultType="com.project42.sai.dto.NotificationDto">
+        SELECT
+            id,
+            user_id    AS userId,
+            type,
+            title,
+            message,
+            target_id  AS targetId,
+            is_read    AS isRead,
+            link_url   AS linkUrl,
+            read_at    AS readAt,
+            created_at AS createdAt
+        FROM notification
+        WHERE user_id = #{userId}
+        ORDER BY created_at DESC
+        LIMIT #{limit}
+    </select>
+    <update id="markRead">
+        UPDATE notification 
+        SET is_read = TRUE, read_at = NOW()
+        WHERE id= #{id} AND user_id = #{userId}
+    </update>
+
+</mapper>

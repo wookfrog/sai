@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.project42.sai.users.UserSqlMapper">
+    <select id="selectUserByLoginId" resultType="com.project42.sai.dto.UserDto">
+        SELECT id,
+            login_id,
+            password,
+            provider_id,
+            provider,
+            nickname,
+            gender,
+            birth,
+            created_at
+        FROM users
+        WHERE login_id = #{loginId}
+    </select>
+
+    <!-- <select id="selectAdminByLoginId" resultType="com.project42.sai.dto.AdminDto">
+        SELECT id,
+            admin_email,
+            admin_password
+        FROM admin
+        WHERE admin_email= #{adminEmail}
+    </select> -->
+    <!-- 회원가입 -->
+   <insert id="insertUser" parameterType="userDto">
+        INSERT INTO users (
+            login_id, password, provider, provider_id, nickname, gender, birth
+        ) VALUES (
+            #{loginId}, #{password}, #{provider}, #{providerId}, #{nickname}, #{gender}, #{birth}
+        );
+</insert>
+    <!-- 회원 조회 -->
+    <select id="selectUserByProvider" resultType="com.project42.sai.dto.UserDto">
+        SELECT * FROM users
+        WHERE provider = #{provider}
+          AND provider_id = #{providerId}
+    </select>
+
+    <!-- 커플 매칭 시 유저 성별 업데이트  -->
+    <update id="updateGender">
+        UPDATE users 
+        SET gender = #{gender}
+        WHERE id= #{userId}
+    </update>
+
+    <update id="updateUserInfo">
+        UPDATE users 
+        SET gender = #{gender},
+            nickname =#{nickname},
+            birth = #{birth}
+        WHERE id= #{id}
+    </update>
+
+
+</mapper>

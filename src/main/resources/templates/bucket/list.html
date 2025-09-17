@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>버킷리스트</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Apple SD Gothic Neo', sans-serif;
+      background-color: #f7f9fc;
+    }
+
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 20px 16px 100px;
+    }
+
+    h2 {
+      margin: 10px 0 20px;
+    }
+
+    .item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      background: #fff;
+      border-radius: 12px;
+      padding: 14px 12px;
+      margin-bottom: 10px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      transition: background 0.2s;
+    }
+
+    .item.done {
+      background: #f1f3f4;
+      color: #9aa0a6;
+    }
+
+    .item.done .title {
+      text-decoration: line-through;
+    }
+
+    .check {
+      width: 20px;
+      height: 20px;
+      margin-top: 2px;
+    }
+
+    .content {
+      flex: 1;
+    }
+
+    .title {
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 4px;
+    }
+
+    .desc {
+      font-size: 14px;
+      color: #555;
+    }
+
+    .meta {
+      font-size: 12px;
+      color: #999;
+      margin-top: 6px;
+    }
+
+    /* 작성 버튼 */
+    .fab {
+      position: fixed;
+      right: 20px;
+      bottom: 24px;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: #4285f4;
+      color: #fff;
+      border: none;
+      font-size: 28px;
+      line-height: 56px;
+      text-align: center;
+      cursor: pointer;
+      box-shadow: 0 6px 16px rgba(66, 133, 244, 0.4);
+      transition: transform 0.1s;
+    }
+
+    .fab:active {
+      transform: translateY(1px);
+    }
+
+    .delete-btn {
+      background: #ff4d4f;
+      /* 붉은색 배경 */
+      color: #fff;
+      /* 흰 글씨 */
+      border: none;
+      border-radius: 6px;
+      padding: 6px 10px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      margin-left: auto;
+      /* 항목 오른쪽 끝으로 */
+    }
+
+    .delete-btn:hover {
+      background: #d9363e;
+      /* hover 시 조금 더 진한 빨강 */
+    }
+
+    .delete-btn:active {
+      transform: translateY(1px);
+      /* 클릭 시 눌리는 효과 */
+    }
+  </style>
+  <script>
+    document.addEventListener("change", function (e) {
+      if (e.target.classList.contains("check")) {
+        const parent = e.target.closest(".item");
+        if (e.target.checked) {
+          parent.classList.add("done");
+        } else {
+          parent.classList.remove("done");
+        }
+      }
+    })
+
+  </script>
+</head>
+
+<body>
+  <div class="container">
+    <h2>버킷리스트</h2>
+
+    <!-- 더미 데이터 예시 -->
+    <div th:each="bucket : ${list}" th:class="'item ' + (${bucket.isComplete} ? 'done' : '')">
+
+      <!-- 체크박스 -->
+      <input class="check" type="checkbox" th:checked="${bucket.isComplete}" />
+
+      <!-- 내용 -->
+      <div class="content">
+        <div class="title" th:text="${bucket.title != null ? bucket.title : '제목없음'}">
+          제목
+        </div>
+        <div class="desc" th:text="${bucket.content != null ? bucket.content : '내용없음'}">
+          내용
+        </div>
+        <div class="meta" th:text="${#temporals.format(bucket.createdAt, 'yyyy.MM.dd HH:mm')}">
+          2025.08.23 21:30
+        </div>
+      </div>
+      <form th:action="@{/bucket/{id}/delete(id=${bucket.id})}" method="post">
+        <button type="submit" class="delete-btn">삭제</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 작성 버튼 -->
+  <a href="/bucket/new">
+    <button class="fab">+</button>
+  </a>
+
+</body>
+
+</html>

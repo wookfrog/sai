@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.project42.sai.chat.ChatSqlMapper">
+    <!-- 채팅 저장 -->
+    <insert id="insertChatMessage">
+    INSERT INTO chat(
+	    couple_id,sender_user_id,sender_nickname,message_type,content,image_url,is_read,sent_at
+    ) VALUES(
+        #{coupleId}, #{senderUserId}, #{senderNickname},
+        #{messageType}, #{content}, #{imageUrl}, #{isRead}, #{sentAt}
+    )
+    </insert>
+    <!-- 채팅 출력 -->
+    <select id="selectChatMessagesByCoupleId" resultType="com.project42.sai.dto.ChatDto">
+        SELECT * FROM chat
+        WHERE couple_id = #{coupleId}
+        ORDER BY sent_at ASC;
+    </select>
+
+    <!-- 읽음 표시 -->
+    <update id="markMessagesAsRead">
+        UPDATE chat
+        SET is_read = TRUE
+        WHERE couple_id = #{coupleId}
+        AND sender_user_id != #{readerId}
+        AND is_read = FALSE
+    </update>
+
+
+</mapper>

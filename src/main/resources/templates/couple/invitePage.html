@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>커플 매칭</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f7f9fc;
+      margin: 0;
+      padding: 1.5rem;
+    }
+    .card {
+      background-color: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      max-width: 400px;
+      margin: 2rem auto;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    h2 {
+      text-align: center;
+      color: #4285f4;
+    }
+    label {
+      display: block;
+      margin: 1rem 0 0.5rem;
+      font-weight: bold;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 0.7rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    .gender-group {
+      margin-top: 1rem;
+    }
+    .gender-group label {
+      margin-right: 1rem;
+      font-weight: normal;
+    }
+    .btn {
+      display: block;
+      width: 100%;
+      margin-top: 1.5rem;
+      padding: 0.9rem;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    .error {
+      margin-top: 1rem;
+      color: red;
+      text-align: center;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <h2>초대코드로 커플 매칭하기</h2>
+  <form th:action="@{/couple/join}" method="post">
+    <label for="code">초대코드</label>
+    <input type="text" id="code" name="code" required placeholder="예: ABCD1234">
+
+   
+
+    <button type="submit" class="btn">커플 매칭하기</button>
+
+    <!-- 에러 메시지 출력 -->
+    <div class="error" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+  </form>
+</div>
+
+</body>
+</html>

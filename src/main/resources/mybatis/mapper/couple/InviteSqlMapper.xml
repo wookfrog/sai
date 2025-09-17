@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.project42.sai.invite.InviteSqlMapper">
+
+  <!-- 초대코드 생성 -->
+  <insert id="insertInviteCode">
+    INSERT INTO invite_code (user_id, code, is_used, created_at)
+    VALUES (#{userId}, #{code}, FALSE, NOW());
+  </insert>
+
+  <!-- 유저가 발급한 최신 초대코드 조회 -->
+  <select id="selectLatestUnusedInviteCodeByUserId"
+          resultType="com.project42.sai.dto.InviteCodeDto">
+    SELECT *
+    FROM invite_code
+    WHERE user_id = #{userId}
+      AND is_used = FALSE
+    ORDER BY created_at DESC
+    LIMIT 1;
+  </select>
+
+  <!-- 초대코드로 조회 -->
+  <select id="selectInviteCodeByCode"
+          resultType="com.project42.sai.dto.InviteCodeDto">
+    SELECT *
+    FROM invite_code
+    WHERE code = #{code};
+  </select>
+
+  <!-- 초대코드 사용 처리 -->
+  <update id="updateInviteCodeAsUsed">
+    UPDATE invite_code 
+    SET is_used = TRUE,
+        couple_id = #{coupleId},
+        used_at = NOW()
+    WHERE code = #{code};
+  </update>
+
+</mapper>

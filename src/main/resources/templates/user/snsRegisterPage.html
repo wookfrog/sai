@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta charset="UTF-8">
+    <title>SNS 로그인</title>
+    <style>
+        /* 전체 배경 및 가운데 정렬 */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            background-color: #f5f5f5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        /* 타이틀 */
+        h1 {
+            margin-bottom: 40px;
+            color: #333;
+        }
+
+        /* 공통 버튼 스타일 */
+        .sns-button {
+            display: inline-block;
+            width: 260px;
+            padding: 14px;
+            margin: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+            text-decoration: none;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        /* 마우스 호버 효과 */
+        .sns-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        /* 각 플랫폼 색상 */
+        .sns-button.google {
+            background-color: #4285F4;
+            color: white;
+        }
+
+        .sns-button.kakao {
+            background-color: #FEE500;
+            color: #000;
+        }
+
+        .sns-button.naver {
+            background-color: #03C75A;
+            color: white;
+        }
+
+        /* 반응형 대응 */
+        @media (max-width: 800px) {
+            .sns-button {
+                width: 80%;
+                font-size: 14px;
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h1>SNS 로그인</h1>
+    <a class="sns-button google" href="https://accounts.google.com/o/oauth2/v2/auth
+?client_id=YOUR_GOOGLE_CLIENT_ID
+&redirect_uri=http://localhost:8888/oauth2/google/callback
+&response_type=code
+&scope=email%20profile
+&access_type=offline">
+        구글 로그인
+    </a><br>
+
+    <a class="sns-button kakao" href="https://kauth.kakao.com/oauth/authorize
+?client_id=YOUR_KAKAO_REST_API_KEY
+&redirect_uri=http://localhost:8888/oauth2/kakao/callback
+&response_type=code">
+        카카오 로그인
+    </a><br>
+
+    <a class="sns-button naver" href="https://nid.naver.com/oauth2.0/authorize
+?client_id=YOUR_NAVER_CLIENT_ID
+&redirect_uri=http://localhost:8888/oauth2/naver/callback
+&response_type=code
+&state=randomState">
+        네이버 로그인
+    </a><br>
+</body>
+
+
+</html>

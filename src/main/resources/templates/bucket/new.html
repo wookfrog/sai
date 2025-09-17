@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <title>버킷리스트 작성</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Apple SD Gothic Neo', sans-serif;
+      background-color: #f7f9fc;
+    }
+
+    .container {
+      max-width: 720px;
+      margin: 40px auto;
+      padding: 20px;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 14px;
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 6px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    .actions {
+      margin-top: 20px;
+      display: flex;
+      gap: 10px;
+    }
+
+    button {
+      padding: 10px 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .primary {
+      background: #4285f4;
+      color: #fff;
+    }
+
+    .cancel {
+      background: #eee;
+      color: #333;
+    }
+  </style>
+ 
+</head>
+
+<body>
+  <div class="container">
+    <h2>버킷리스트 작성</h2>
+    <div class="card">
+      <!-- POST /bucket 으로 전송 -->
+      <form th:action="@{/bucket}" method="post">
+        <label for="title">제목</label>
+        <input id="title" name="title" type="text" maxlength="200" required />
+
+        <label for="content">내용</label>
+        <textarea id="content" name="content" rows="5" required></textarea>
+
+        <div class="actions">
+          <button type="submit" class="primary">등록</button>
+          <a th:href="@{/bucket}">
+            <button type="button" class="cancel">취소</button>
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+ <script>
+    document.getElementById("content").addEventListener("keydown", function (e) {
+      if (e.key === "Enter" && !e.shiftKey) { // Shift+Enter는 줄바꿈 유지
+        e.preventDefault();                  // 기본 줄바꿈 막기
+        this.form.submit();                  // 폼 전송
+      }
+    });
+  </script>
+</body>
+</html>

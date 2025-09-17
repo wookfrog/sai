@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.project42.sai.couple.CoupleSqlMapper">
+     <!-- 커플 생성 -->
+     <!-- useGeneratedKeys="true" 는 자동 생성된 DB 값을 가져온다
+          keyProperty="id"  그 키 값을 couple.id에 넣겠다는 의미  -->
+  <insert id="insertCouple"
+        useGeneratedKeys="true" 
+        keyProperty="id">
+    INSERT INTO couple (male_user_id, female_user_id, status, created_at, update_at)
+    VALUES (#{maleUserId}, #{femaleUserId}, 'ACTIVE', NOW(), NOW());
+  </insert>
+
+  <!-- 유저 ID 기준으로 커플 조회 -->
+  <select id="selectCoupleByUserId" resultType="com.project42.sai.dto.CoupleDto">
+    SELECT *
+    FROM couple
+    WHERE male_user_id = #{userId}
+       OR female_user_id = #{userId};
+  </select>
+</mapper>

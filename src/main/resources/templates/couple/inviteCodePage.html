@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>초대코드 발급</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f7f9fc;
+      margin: 0;
+      padding: 2rem;
+      text-align: center;
+    }
+    .card {
+      background-color: white;
+      border-radius: 12px;
+      padding: 2rem;
+      max-width: 400px;
+      margin: 0 auto;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+    .code-box {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #2c3e50;
+      background-color: #ecf0f1;
+      padding: 1rem;
+      margin: 1rem 0;
+      border-radius: 8px;
+    }
+    button {
+      padding: 0.7rem 1.2rem;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-top: 1rem;
+    }
+    .secondary {
+      background-color: #95a5a6;
+      margin-top: 1.5rem;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h2>나의 초대코드</h2>
+
+    <div class="code-box" id="codeBox" th:text="${inviteCode}">ABC12345</div>
+
+    <button onclick="copyCode()">코드 복사하기</button>
+
+    <br>
+    <a th:href="@{/home}">
+      <button class="secondary">홈으로 돌아가기</button>
+    </a>
+  </div>
+
+  <script>
+    function copyCode() {
+      const code = document.getElementById('codeBox').innerText;
+      navigator.clipboard.writeText(code)
+        .then(() => alert('초대코드가 복사되었습니다!'))
+        .catch(() => alert('복사에 실패했습니다.'));
+    }
+  </script>
+
+</body>
+</html>

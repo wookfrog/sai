@@ -1,0 +1,109 @@
+ /* loginPage styles */
+
+        body {
+            background-color: #f4f4f4;
+        }
+
+        .loginWrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            padding: 0 20px;
+        }
+
+        .login_box {
+            width: 100%;
+            max-width: 400px;
+            background: white;
+            border-radius: 12px;
+            padding: 30px 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .title {
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            padding: 12px;
+            font-size: 1rem;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+        }
+
+
+
+        button[type="submit"] {
+            padding: 12px;
+            background-color: #FE94A0;
+            color: white;
+            border-radius: 8px;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #e9122b;
+        }
+
+        a {
+            text-decoration: none;
+            font-weight: 500;
+
+        }
+
+        .snsButton {
+            padding: 12px;
+            font-size: 0.95rem;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            background-color: #FE94A0;
+            transition: background-color 0.2s;
+            text-align: center;
+            color: white;
+        }
+
+        .snsButton:hover {
+            background-color: #e9122b;
+        }
+
+        .etc-links {
+            display: flex;
+            flex-direction: column;
+            gap: 10px
+        }
+
+        .linkButton {
+            margin-top: 12px;
+            padding: 12px;
+            font-size: 0.95rem;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            background-color: #FE94A0;
+            transition: background-color 0.2s;
+            text-align: center;
+            color: white;
+        }
+
+        .linkButton:hover{
+            background-color: #e9122b;
+        }
