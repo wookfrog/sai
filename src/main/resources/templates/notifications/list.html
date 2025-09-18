@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>알림목록</title>
+    <style>
+        .noti-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .noti-item {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .noti-item.unread {
+            background-color: #fff5f5;
+            font-weight: bold;
+        }
+
+        .noti-item a {
+            text-decoration: none;
+            color: inherit;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>알림 목록</h2>
+    <ul>
+        <li th:each="n:${notifications}" th:class="'noti-item + (${n.isRead} ? '' : 'unread')">
+            <a th:href="@{${n.linkUrl}}"></a>
+            <span th:text="${n.title}"></span>
+            <span th:text="${n.message}"></span>
+            <span th:text="${#temporals.format(n.createdAt, 'yyyy-MM-dd HH:mm')}"></span>
+        </li>
+    </ul>
+</body>
+
+</html>

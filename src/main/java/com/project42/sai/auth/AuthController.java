@@ -78,7 +78,6 @@ public class AuthController {
 
     @GetMapping("/SNSlogin")
     public String snsLoginForm(HttpSession session, Model model) {
-
         return "user/snsRegisterPage";
     }
 

@@ -12,6 +12,7 @@ public class SessionUtil {
 
     // 로그인한 유저 정보를 세션에 저장 로직
     public static void setLoginUser(HttpSession session, UserDto userDto){
+        session.setAttribute(SessionConstants.LOGIN_USER_ID, userDto.getId());
         session.setAttribute(SessionConstants.LOGIN_USER, userDto);
     }
 
