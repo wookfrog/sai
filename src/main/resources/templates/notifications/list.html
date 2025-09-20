@@ -30,14 +30,29 @@
 
 <body>
     <h2>알림 목록</h2>
-    <ul>
-        <li th:each="n:${notifications}" th:class="'noti-item + (${n.isRead} ? '' : 'unread')">
-            <a th:href="@{${n.linkUrl}}"></a>
-            <span th:text="${n.title}"></span>
-            <span th:text="${n.message}"></span>
-            <span th:text="${#temporals.format(n.createdAt, 'yyyy-MM-dd HH:mm')}"></span>
+    <ul class="noti-list">
+        <li th:each="n : ${notifications}" th:class="'noti-item'+(${n.isRead} ? '' : 'noti-item unread')">
+            <a href="javascript:void(0);" th:onclick="markRead(this)">
+                <span th:text="${n.title}"></span>
+                <span th:text="${n.message}"></span>
+                <span th:text="${#temporals.format(n.createdAt, 'yyyy-MM-dd HH:mm')}"></span>
+            </a>
         </li>
     </ul>
+
+    <script>
+        async function markRead(el) {
+            const id = el.getAttribute("data-id");
+            const linkUrl = el.getAttribute("data-link")
+            try {
+                await fetch('/api/notifications/${id}/read', { method: 'POST' });
+                Window.location.href = linkUrl;
+            } catch (e) {
+                console.log("읽음 처리 실패");
+                Window.location.href = linkUrl;
+            }
+        }
+    </script>
 </body>
 
 </html>

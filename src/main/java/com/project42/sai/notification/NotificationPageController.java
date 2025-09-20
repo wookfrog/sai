@@ -23,7 +23,6 @@ public class NotificationPageController {
     @GetMapping("/list")
     public String listPage(HttpSession session, Model model){
         Long userId = SessionUtil.getLoginUserId(session);
-        System.out.println("session= " + session);
         if(userId == null){
             return "redirect:/login";
         }

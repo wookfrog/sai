@@ -26,7 +26,7 @@ public class NotificationRestController {
      * - 프론트에서 뱃지/드롭다운 채우기 용도로 사용
      */
     @GetMapping
-    public List<NotificationDto>list(HttpSession session, @RequestParam(defaultValue="20") int limit){
+    public List<NotificationDto>list(HttpSession session, @RequestParam(name="limit",defaultValue="20") int limit){
         Long userId = SessionUtil.getLoginUserId(session);
         
         return notificationMapper.selectRecent(userId, limit);
@@ -38,7 +38,7 @@ public class NotificationRestController {
      * - is_read = true, read_at = NOW()
      */
     @PostMapping("/{id}/read")
-    public void markRead(@PathVariable Long id, HttpSession session){
+    public void markRead(@PathVariable("id") Long id, HttpSession session){
         Long userId = SessionUtil.getLoginUserId(session);
         notificationMapper.markRead(userId, id);
     }

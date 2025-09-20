@@ -20,4 +20,12 @@
     WHERE male_user_id = #{userId}
        OR female_user_id = #{userId};
   </select>
+
+  <select id="getCoupleById" parameterType="long" resultType="com.project42.sai.dto.CoupleDto">
+    SELECT *
+    FROM couple
+    WHERE id = #{id}
+    LIMIT 1
+  </select>
+
 </mapper>

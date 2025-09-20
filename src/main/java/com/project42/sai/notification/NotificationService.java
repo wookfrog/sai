@@ -14,8 +14,10 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class NotificationService {
+
     private final NotificationMapper notificationMapper;
     private final SimpMessagingTemplate messagingTemplate;
+
     /*
     알림을 DB에 기록하고 동시에 인앱(webSocket) 알림을 전송
     *
@@ -28,8 +30,8 @@ public class NotificationService {
      * 
      */
     @Transactional
-    public void createAndPush(Long userId, String type, String title, String message, Long targetId, String linkUrl){
-        
+    public void createAndPush(Long userId, String type, String title, String message, Long targetId, String linkUrl) {
+
         NotificationDto dto = new NotificationDto();
         dto.setUserId(userId);
         dto.setType(type);
@@ -39,17 +41,26 @@ public class NotificationService {
         dto.setIsRead(false);
         dto.setLinkUrl(linkUrl);
         // 1) DB 저장
+        System.out.println("[NOTI] about to insert: userId=" + userId + ", title=" + title);
         notificationMapper.insert(dto);
+        System.out.println("[NOTI] inserted. id=" + dto.getId());
 
-        // 2) WebSocket 전송 (클라이언트가 '/user/queue/notifications' 구독해야 수신 가능)
-        NotificationPayload payload = new NotificationPayload(
+         NotificationPayload payload = new NotificationPayload(
             type,
             title,
             message,
             linkUrl,
             LocalDateTime.now()
         );
+
+        try {
+            messagingTemplate.convertAndSendToUser(String.valueOf(userId), "/queue/notifications", payload);
+        } catch (Exception e) {
+            System.err.println("[NOTI] WS push failed: " + e.getMessage());
+        }
+        // 2) WebSocket 전송 (클라이언트가 '/user/queue/notifications' 구독해야 수신 가능)
+       
         // convertAndSendToUser 의 첫 번째 인자는 Principal.getName() 값 → 보통 userId 문자열 사용
-        messagingTemplate.convertAndSendToUser(String.valueOf(userId), "/queue/notifications", payload);
+        
     }
 }

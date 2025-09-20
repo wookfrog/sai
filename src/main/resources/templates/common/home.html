@@ -2,8 +2,8 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>SAI 커플 홈</title>
     <style>
         * {
@@ -42,6 +42,28 @@
             font-size: 1rem;
             font-weight: bold;
             color: #ff4d6d;
+        }
+
+        .notification {
+            position: absolute;
+            top: 16px;
+            right: 60px;
+            /* D-Day 옆 */
+            cursor: pointer;
+            text-decoration: none;
+            color: white;
+            font-size: 1.4rem;
+        }
+
+        #noti-badge {
+            background: red;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 0.8rem;
+            position: absolute;
+            top: -5px;
+            right: -10px;
         }
 
         main {
@@ -86,7 +108,7 @@
             display: flex;
             justify-content: space-around;
             padding: 1rem;
-            background-color: #ffffff;
+            background-color: #fff;
             box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.1);
             position: fixed;
             bottom: 0;
@@ -105,40 +127,38 @@
         .footer a:hover {
             color: #ff5d8f;
         }
-
-        .notification {
-            position: absolute;
-            top: 16px;
-            right: 60px;
-            /* D-Day 옆에 위치 */
-            cursor: pointer;
-            text-decoration: none;
-        }
-
-        #noti-badge {
-            background: red;
-            color: white;
-            border-radius: 50%;
-            padding: 2px 6px;
-            font-size: 0.8rem;
-            position: absolute;
-            top: -5px;
-            right: -10px;
-        }
     </style>
+
     <script>
-        // 안 읽은 알림 개수
-        async function updateBage() {
-            const res = await fetch('/api/notifications');
-            const data = await res.json();
-            const unreadCount = data.filter(n=>!n.isRead).length;
-            document.getElementById("noti-badge").textContent= unreadCount;
+        // ✅ 안 읽은 알림 개수 갱신 (함수명 오타 수정)
+        async function updateBadge() {
+            try {
+                const res = await fetch('/api/notifications'/*, { credentials: 'include' }*/);
+                const data = await res.json();
+                const unreadCount = data.filter(n => !n.isRead).length;
+                document.getElementById('noti-badge').textContent = unreadCount;
+            } catch (e) {
+                console.error('알림 불러오기 실패', e);
+            }
         }
 
+        // 페이지 로드 시 한 번 갱신
+        window.addEventListener('DOMContentLoaded', updateBadge);
     </script>
 </head>
 
 <body>
+    <!-- ✅ header는 body 바로 아래에 -->
+    <header>
+        SAI 커플 홈
+        <!-- <div class="top-right-d-day" th:text="${dDay == null} ? (dDay + '일째 사랑중') : '187일째 사랑중'"></div> -->
+
+        <a th:href="@{/notifications/list}" class="notification" aria-label="알림">
+            🔔 <span id="noti-badge">0</span>
+        </a>
+    </header>
+
+    <!-- ✅ main은 하나만 -->
     <main>
         <div th:if="${notMatched}" class="card">
             <p>아직 커플이 매칭되지 않았어요!</p>
@@ -146,48 +166,50 @@
             <a th:href="@{/invite}" class="btn-primary">커플 매칭하러 가기</a>
         </div>
 
-        <header>
-            SAI 커플 홈
-            <a th:href="@{/notifications/list}" class="notification">
-                🔔
-                <span id="noti-badge">0</span>
-            </a>
+        <div class="side-features">
+            <a th:href="@{/question}" class="side-feature">오늘의 문답</a>
+            <a th:href="@{/diary}" class="side-feature">다이어리</a>
+            <a th:href="@{/bucket}" class="side-feature">버킷리스트</a>
+        </div>
 
-
-        </header>
-
-        <main>
-            <div class="side-features">
-                <a th:href="@{/question}" class="side-feature">오늘의 문답</a>
-                <a th:href="@{/diary}" class="side-feature">다이어리</a>
-                <a th:href="@{/bucket}" class="side-feature">버킷리스트</a>
+        <div class="middle-section">
+            <div style="background-color:#fff8fa;border-radius:12px;display:inline-block;padding:8px;">
+                <img src="https://file.miricanvas.com/template_thumb/2025/02/12/16/30/k31jmfoct1o60ops/thumb.webp?size=400"
+                    alt="캐릭터 이미지" style="display:block;border-radius:12px;">
             </div>
-
-            <!-- <img th:src="@{/images/character.png}" alt="캐릭터 이미지"> -->
-            <div class="middle-section">
-                <div style="background-color: #fff8fa; border-radius: 12px; display: inline-block; padding: 8px;">
-                    <img src="https://file.miricanvas.com/template_thumb/2025/02/12/16/30/k31jmfoct1o60ops/thumb.webp?size=400"
-                        alt="캐릭터 이미지" style="display: block; border-radius: 12px;">
-                </div>
-                <p>오늘의 미션 완료하고 사랑을 충전해볼까요?</p>
-            </div>
-        </main>
-
-        <div class="footer">
-            <a th:href="@{/schedule}">캘린더</a>
-            <a th:href="@{/chat/room}" target="_blank">채팅</a>
-            <a th:href="@{'/video/test'(roomId=${roomId}, userId=${userId})}" target="_blank">영상통화</a>
-            <a th:href="@{/decorate}">홈 꾸미기</a>
-            <a th:href="@{/logout}">로그아웃</a>
-            <a th:href="@{/setting}">설정</a>
+            <p>오늘의 미션 완료하고 사랑을 충전해볼까요?</p>
         </div>
     </main>
 
+    <div class="footer">
+        <a th:href="@{/schedule}">캘린더</a>
+        <a th:href="@{/chat/room}" target="_blank">채팅</a>
+        <a th:href="@{'/video/test'(roomId=${roomId}, userId=${userId})}" target="_blank">영상통화</a>
+        <a th:href="@{/decorate}">홈 꾸미기</a>
+        <a th:href="@{/logout}">로그아웃</a>
+        <a th:href="@{/setting}">설정</a>
+    </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+    <script>
+        let stompClient;
 
+        function connectStomp() {
+            const sock = new SockJS("/ws-chat");
+            stompClient = Stomp.over(sock);
+            stompClient.connect({}, () => {
+                stompClient.subscribe('/user/queue/notifications', (frame) => {
+                    const badge = document.getElementById('noti-badge');
+                    const current = parseInt(badge.textContent || '0', 10);
+                    badge.textContent = current + 1;
+                });
+            });
+        }
 
-
+        window.addEventListener('DOMContentLoaded', connectStomp);
     </script>
+
 </body>
 
 </html>

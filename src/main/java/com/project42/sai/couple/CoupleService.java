@@ -53,4 +53,8 @@ public class CoupleService {
 
         inviteService.markInviteCodeAsUsed(code, couple.getId());
     }
+
+    public CoupleDto getCoupleById(Long coupleId){
+        return coupleSqlMapper.getCoupleById(coupleId);
+    }
 }

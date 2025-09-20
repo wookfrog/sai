@@ -19,7 +19,7 @@ import org.springframework.web.client.RestTemplate;
 public class AuthService {
 
     private final RestTemplate restTemplate = new RestTemplate();
-       // ✅ application.properties (or env)에서 주입받음
+    // ✅ application.properties (or env)에서 주입받음
     @Value("${google.client-id}")
     private String googleClientId;
 
