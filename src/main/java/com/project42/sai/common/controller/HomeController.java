@@ -30,7 +30,7 @@ public class HomeController {
             return "redirect:/home";
         }
 
-        return "redirect:/login";
+        return "common/splash";
     }
 
     // 홈 페이지

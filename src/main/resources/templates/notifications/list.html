@@ -4,54 +4,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/sai-love-theme.css}" />
     <title>알림목록</title>
-    <style>
-        .noti-list {
-            list-style: none;
-            padding: 0;
-        }
-
-        .noti-item {
-            padding: 12px;
-            border-bottom: 1px solid #ddd;
-        }
-
-        .noti-item.unread {
-            background-color: #fff5f5;
-            font-weight: bold;
-        }
-
-        .noti-item a {
-            text-decoration: none;
-            color: inherit;
-        }
-    </style>
+   
 </head>
 
 <body>
     <h2>알림 목록</h2>
     <ul class="noti-list">
         <li th:each="n : ${notifications}" th:class="'noti-item'+(${n.isRead} ? '' : 'noti-item unread')">
-            <a href="javascript:void(0);" th:onclick="markRead(this)">
-                <span th:text="${n.title}"></span>
-                <span th:text="${n.message}"></span>
-                <span th:text="${#temporals.format(n.createdAt, 'yyyy-MM-dd HH:mm')}"></span>
+            <a class="noti-link" th:href="${n.linkUrl} ?: '#'" th:attr="data-id=${n.id}">
+                <span th:text="${n.title}">제목</span>
+                &nbsp;—&nbsp;
+                <span th:text="${n.message}">내용</span>
+                &nbsp;
+                <span th:text="${#temporals.format(n.createdAt, 'yyyy-MM-dd HH:mm')}">시간</span>
             </a>
         </li>
     </ul>
 
     <script>
-        async function markRead(el) {
-            const id = el.getAttribute("data-id");
-            const linkUrl = el.getAttribute("data-link")
+        // 공통: 읽음 처리 + 이동
+        async function markReadAndGo(id, href) {
             try {
-                await fetch('/api/notifications/${id}/read', { method: 'POST' });
-                Window.location.href = linkUrl;
+                await fetch(`/api/notifications/${id}/read`, {
+                    method: 'POST',
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                });
             } catch (e) {
-                console.log("읽음 처리 실패");
-                Window.location.href = linkUrl;
+                console.warn('읽음 처리 실패(무시하고 이동):', e);
+            } finally {
+                if (href && typeof href === 'string') {
+                    if (!href.startsWith('/')) {
+                        href = '/' + href;
+                    }
+                    window.location.assign(href);
+                }
             }
         }
+
+        // 이벤트 바인딩
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.noti-link').forEach(a => {
+                a.addEventListener('click', (e) => {
+                    e.preventDefault(); //기본 이동 잠시 막고
+                    const id = a.dataset.id;
+                    const href = a.getAttribute('href');
+                    if (!id) {
+                        return window.location.assign(href || '/');
+                    }
+                    markReadAndGo(id, href);
+                })
+            })
+        })
     </script>
 </body>
 

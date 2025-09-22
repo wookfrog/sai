@@ -16,5 +16,6 @@ public interface UserSqlMapper {
     public UserDto selectUserByProvider(@Param("provider") String provider, @Param("providerId") String providerId);
     public void updateGender(@Param("userId")Long userId, @Param("gender") String gender);
     public void updateUserInfo(UserDto userDto);
+    public UserDto  selectUserById(@Param("id") Long id);
 }
 

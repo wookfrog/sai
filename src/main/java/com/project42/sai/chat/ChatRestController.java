@@ -16,6 +16,7 @@ import com.project42.sai.dto.ChatDto;
 import com.project42.sai.dto.CoupleDto;
 import com.project42.sai.dto.UserDto;
 import com.project42.sai.notification.NotificationService;
+import com.project42.sai.users.UserSqlMapper;
 import com.project42.sai.util.SessionUtil;
 
 import jakarta.servlet.http.HttpSession;
@@ -29,6 +30,7 @@ public class ChatRestController {
     private final ChatService chatService;
     private final CoupleService coupleService;
     private final NotificationService notificationService;
+    private final UserSqlMapper userSqlMapper;
 
     // 채팅 전송
     // * 1) DB에 채팅 저장
@@ -45,7 +47,9 @@ public class ChatRestController {
         if (couple == null) {
             throw new IllegalArgumentException("유효하지 않은 coupleId 입니다.");
         }
-        Long receiverId = couple.getMaleUserId().equals(sender.getId()) ? couple.getFemaleUserId() : couple.getMaleUserId();
+        Long receiverId = couple.getFemaleUserId().equals(sender.getId())
+                ? couple.getMaleUserId()
+                : couple.getFemaleUserId();
         String senderNickname = sender.getNickname();
         String preview = chatDto.getContent() != null ? chatDto.getContent() : "";
         if (preview.length() > 20) {
@@ -74,7 +78,23 @@ public class ChatRestController {
         Map<String, Object> result = new HashMap<>();
         result.put("userId", loginUser.getId());
         result.put("nickname", loginUser.getNickname());
-        result.put("coupleId", couple != null ? couple.getId() : null);
+        Long coupleId = (couple != null ? couple.getId() : null);
+        result.put("coupleId", coupleId);
+
+        // ✅ 커플이 있으면 상대방 닉네임 내려주기
+        String partnerNickname = null;
+        if (couple != null) {
+            Long me = loginUser.getId();
+            Long partnerUserId = couple.getMaleUserId().equals(me)
+                    ? couple.getFemaleUserId()
+                    : couple.getMaleUserId();
+
+            // 메서드명은 프로젝트에 맞게 사용
+            // 예) userService.findById / getUserById / selectUserById 등
+            UserDto partner = userSqlMapper.selectUserById(partnerUserId);
+            if (partner != null) partnerNickname = partner.getNickname() ;
+        }
+        result.put("partnerNickname", partnerNickname);
 
         return result;
 

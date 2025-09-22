@@ -18,4 +18,5 @@ public class ChatDto {
 
     private Boolean isRead;          // 읽음 여부
     private LocalDateTime sentAt;    // 메시지 전송 시간
+    private String clientMsgId;
 }

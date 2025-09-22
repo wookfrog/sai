@@ -40,13 +40,7 @@ public class AuthController {
             @RequestParam("password") String password,
             HttpSession session,
             Model model) {
-        // 관리자 로그인 세션
-        // AdminDto admin = userService.adminLogin(loginId, password);
-        // if (admin != null) {
-        //     SessionUtil.setLoginAdmin(session, admin);
-        //     return "redirect:/admin/dashboard";
-        // }
-        // 유저 로그인 세션
+       
 
         UserDto user = userService.login(loginId, password);
         if (user == null) {

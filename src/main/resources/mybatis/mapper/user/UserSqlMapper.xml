@@ -53,6 +53,17 @@
             birth = #{birth}
         WHERE id= #{id}
     </update>
-
+    <select id="selectUserById" parameterType="long" resultType="com.project42.sai.dto.UserDto">
+        SELECT id,
+            login_id,
+            provider,
+            provider_id,
+            nickname,
+            gender,
+            birth,
+            created_at
+        FROM users
+        WHERE id = #{id}
+    </select>
 
 </mapper>
