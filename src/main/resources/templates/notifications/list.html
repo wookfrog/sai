@@ -6,25 +6,127 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" th:href="@{/css/sai-love-theme.css}" />
     <title>알림목록</title>
-   
+
+    <style>
+        :root {
+            --bg-gray: #f2f3f5;
+            --card-bg: rgba(255, 255, 255, 0.7);
+            --unread-bg: rgba(249, 243, 255, 0.9);
+            --border: rgba(255, 255, 255, 0.4);
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --text-main: #2b2b2b;
+            --text-sub: #777;
+            --accent: #a679d2;
+        }
+
+        body {
+            background: linear-gradient(180deg, #e9d1f0 0%, #fce2e2 100%);
+            margin: 0;
+            font-family: 'Noto Sans KR', sans-serif;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 30px 0;
+        }
+
+        .noti-container {
+            width: min(420px, 92vw);
+        }
+
+        .noti-header {
+            background: var(--card-bg);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            padding: 16px 22px;
+            font-size: 20px;
+            font-weight: 900;
+            color: var(--accent);
+            margin-bottom: 18px;
+            border: 1px solid var(--border);
+        }
+
+        .noti-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .noti-item {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            box-shadow: var(--shadow);
+            transition: transform 0.1s ease, background 0.3s ease;
+        }
+
+        .noti-item.unread {
+            background: var(--unread-bg);
+            border-left: 5px solid var(--accent);
+        }
+
+        .noti-item:hover {
+            transform: translateY(-2px);
+        }
+
+        .noti-text {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .noti-title {
+            font-weight: 800;
+            font-size: 15px;
+            color: var(--accent);
+        }
+
+        .noti-msg {
+            font-size: 14px;
+            color: var(--text-main);
+        }
+
+        .noti-time {
+            font-size: 12px;
+            color: var(--text-sub);
+            white-space: nowrap;
+            padding-top: 3px;
+        }
+    </style>
+
 </head>
 
 <body>
-    <h2>알림 목록</h2>
+    <div class="noti-container">
+    <div class="noti-header">알림 목록</div>
+
     <ul class="noti-list">
-        <li th:each="n : ${notifications}" th:class="'noti-item'+(${n.isRead} ? '' : 'noti-item unread')">
-            <a class="noti-link" th:href="${n.linkUrl} ?: '#'" th:attr="data-id=${n.id}">
-                <span th:text="${n.title}">제목</span>
-                &nbsp;—&nbsp;
-                <span th:text="${n.message}">내용</span>
-                &nbsp;
-                <span th:text="${#temporals.format(n.createdAt, 'yyyy-MM-dd HH:mm')}">시간</span>
-            </a>
-        </li>
+      <!-- 서버에서 받은 알림 리스트 -->
+      <li th:each="n : ${notifications}" th:class="'noti-item' + (${n.isRead} ? '' : ' unread')">
+        <a class="noti-link" th:href="${n.linkUrl} ?: '#'" th:attr="data-id=${n.id}">
+          <div>
+            <div class="noti-title" th:text="${n.title}">제목</div>
+            <div class="noti-msg" th:text="${n.message}">내용</div>
+          </div>
+          <span class="noti-time" th:text="${#temporals.format(n.createdAt, 'yyyy-MM-dd HH:mm')}">시간</span>
+        </a>
+      </li>
+
+      <!-- 알림이 없을 때 -->
+      <li th:if="${#lists.isEmpty(notifications)}" class="empty">새 알림이 없습니다 💌</li>
     </ul>
+  </div>
 
     <script>
-        // 공통: 읽음 처리 + 이동
+        // 읽음 처리 후 이동
         async function markReadAndGo(id, href) {
             try {
                 await fetch(`/api/notifications/${id}/read`, {
@@ -35,28 +137,23 @@
                 console.warn('읽음 처리 실패(무시하고 이동):', e);
             } finally {
                 if (href && typeof href === 'string') {
-                    if (!href.startsWith('/')) {
-                        href = '/' + href;
-                    }
+                    if (!href.startsWith('/')) href = '/' + href;
                     window.location.assign(href);
                 }
             }
         }
 
-        // 이벤트 바인딩
         document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('.noti-link').forEach(a => {
                 a.addEventListener('click', (e) => {
-                    e.preventDefault(); //기본 이동 잠시 막고
+                    e.preventDefault();
                     const id = a.dataset.id;
                     const href = a.getAttribute('href');
-                    if (!id) {
-                        return window.location.assign(href || '/');
-                    }
+                    if (!id) return window.location.assign(href || '/');
                     markReadAndGo(id, href);
-                })
-            })
-        })
+                });
+            });
+        });
     </script>
 </body>
 

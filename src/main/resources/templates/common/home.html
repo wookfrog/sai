@@ -1,215 +1,194 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
-
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SAI 커플 홈</title>
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>SAI 커플 홈</title>
 
-        html,
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Arial', sans-serif;
-            background-color: #fff8fa;
-            color: #333;
-            height: 100%;
-        }
+  <style>
+    :root{
+      /* 우리 테마 */
+      --grad-start:#ff9a9e; --grad-mid:#fecfef; --grad-end:#fbc2eb;
+      --violet:#7b4fa8; --text:#2b2b2b; --sub:#8b8f98; --border:#eceff3; --white:#fff;
+      --card-bg:rgba(255,255,255,.78); --card-stroke:rgba(255,255,255,.65);
+      --shadow:0 18px 50px rgba(121,58,120,.15);
+    }
 
-        body {
-            display: flex;
-            flex-direction: column;
-        }
+    html,body{height:100%;margin:0;color:var(--text);font-family:'Noto Sans KR',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:#fff;}
+    /* 배경(로그인/스플래시와 같은 결) */
+    .app-bg{
+      min-height:100dvh;
+      background:
+        radial-gradient(1200px 900px at 15% 8%, rgba(255,255,255,.25), transparent 60%),
+        radial-gradient(900px 700px at 88% 90%, rgba(255,255,255,.18), transparent 60%),
+        linear-gradient(160deg,var(--grad-start),var(--grad-mid) 45%,var(--grad-end));
+      display:flex;justify-content:center;
+      padding-bottom:calc(68px + env(safe-area-inset-bottom,0px)); /* 탭바 자리 */
+    }
 
-        header {
-            background-color: #ffadc0;
-            color: white;
-            padding: 1rem;
-            text-align: center;
-            font-size: 1.4rem;
-            font-weight: bold;
-            position: relative;
-        }
+    /* 모바일 캔버스 */
+    .app{
+      width:min(480px, 100vw);
+      display:flex; flex-direction:column;
+    }
 
-        .top-right-d-day {
-            position: absolute;
-            top: 16px;
-            right: 16px;
-            font-size: 1rem;
-            font-weight: bold;
-            color: #ff4d6d;
-        }
+    /* 헤더 (글래스+알림) */
+    .header{
+      position:sticky; top:env(safe-area-inset-top,0px);
+      padding:16px 18px; z-index:5;
+      display:flex; align-items:center; justify-content:center; gap:8px;
+      color:#fff; font-weight:900; letter-spacing:.4px; font-size:22px;
+    }
+    .header .right{
+      position:absolute; right:12px; top:12px; display:flex; align-items:center; gap:10px;
+    }
+    .bell{
+      position:relative; display:inline-flex; align-items:center; justify-content:center;
+      width:36px; height:36px; border-radius:50%;
+      background:rgba(255,255,255,.25); backdrop-filter:blur(6px);
+      color:#fff; text-decoration:none;
+      border:1px solid rgba(255,255,255,.5);
+    }
+    .badge{
+      position:absolute; top:-4px; right:-4px;
+      background:#ff3b57; color:#fff; border-radius:999px;
+      font-size:10px; padding:2px 6px; border:2px solid rgba(255,255,255,.9);
+    }
 
-        .notification {
-            position: absolute;
-            top: 16px;
-            right: 60px;
-            /* D-Day 옆 */
-            cursor: pointer;
-            text-decoration: none;
-            color: white;
-            font-size: 1.4rem;
-        }
+    /* 메인 카드(글래스) */
+    .card{
+      margin:10px 14px 0; padding:18px 14px;
+      background:var(--card-bg); border:1px solid var(--card-stroke);
+      border-radius:22px; box-shadow:var(--shadow);
+    }
 
-        #noti-badge {
-            background: red;
-            color: white;
-            border-radius: 50%;
-            padding: 2px 6px;
-            font-size: 0.8rem;
-            position: absolute;
-            top: -5px;
-            right: -10px;
-        }
+    /* 기능 타일 */
+    .feature-grid{
+      display:grid; grid-template-columns:repeat(3,1fr); gap:12px;
+    }
+    .tile{
+      height:92px; border-radius:18px; background:#fff; border:1px solid var(--border);
+      display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px;
+      text-decoration:none; color:#333; font-weight:800; font-size:14px;
+      box-shadow:0 8px 20px rgba(0,0,0,.06);
+    }
+    .tile .ico{font-size:22px;}
 
-        main {
-            flex: 1;
-            padding: 1rem;
-            text-align: center;
-            position: relative;
-        }
+    /* 히어로(이미지 + 문구) */
+    .hero{
+      margin:16px 14px 0; padding:16px; border-radius:22px;
+      background:#fff6fb; border:1px solid var(--border); box-shadow:var(--shadow);
+      display:flex; flex-direction:column; align-items:center; text-align:center;
+    }
+    .hero .imgwrap{
+      width:100%; max-width:360px; border-radius:16px; overflow:hidden;
+      background:#fff; box-shadow:0 10px 24px rgba(0,0,0,.08); margin-bottom:12px;
+    }
+    .hero img{display:block; width:100%; height:auto;}
+    .hero p{margin:6px 0 0; color:#5e6470; font-weight:700;}
 
-        .middle-section {
-            margin: 2rem 0;
-        }
-
-        .middle-section img {
-            max-width: 200px;
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .side-features {
-            display: flex;
-            justify-content: space-around;
-            margin: 1rem 0;
-        }
-
-        .side-feature {
-            width: 90px;
-            height: 90px;
-            background-color: #ffeef2;
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.85rem;
-            font-weight: bold;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-            text-decoration: none;
-            color: #333;
-        }
-
-        .footer {
-            display: flex;
-            justify-content: space-around;
-            padding: 1rem;
-            background-color: #fff;
-            box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.1);
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            z-index: 100;
-        }
-
-        .footer a {
-            text-align: center;
-            font-size: 0.9rem;
-            color: #555;
-            text-decoration: none;
-        }
-
-        .footer a:hover {
-            color: #ff5d8f;
-        }
-    </style>
-
-    <script>
-        // ✅ 안 읽은 알림 개수 갱신 (함수명 오타 수정)
-        async function updateBadge() {
-            try {
-                const res = await fetch('/api/notifications'/*, { credentials: 'include' }*/);
-                const data = await res.json();
-                const unreadCount = data.filter(n => !n.isRead).length;
-                document.getElementById('noti-badge').textContent = unreadCount;
-            } catch (e) {
-                console.error('알림 불러오기 실패', e);
-            }
-        }
-
-        // 페이지 로드 시 한 번 갱신
-        window.addEventListener('DOMContentLoaded', updateBadge);
-    </script>
+    /* 하단 탭바 */
+    .tabbar{
+      position:fixed; left:50%; transform:translateX(-50%);
+      bottom:env(safe-area-inset-bottom,0px);
+      width:min(480px,100vw); height:64px;
+      background:rgba(255,255,255,.85); backdrop-filter:blur(10px);
+      border-top:1px solid var(--border);
+      display:flex; align-items:center; justify-content:space-around;
+      box-shadow:0 -10px 24px rgba(0,0,0,.08);
+    }
+    .tab{
+      flex:1; display:flex; flex-direction:column; align-items:center; gap:4px;
+      text-decoration:none; color:#7b7f87; font-size:11px; font-weight:700;
+    }
+    .tab .t-ico{font-size:20px; line-height:1;}
+    .tab.active{ color:var(--violet); }
+  </style>
 </head>
 
 <body>
-    <!-- ✅ header는 body 바로 아래에 -->
-    <header>
+  <div class="app-bg">
+    <div class="app">
+
+      <!-- Header -->
+      <header class="header">
         SAI 커플 홈
-        <!-- <div class="top-right-d-day" th:text="${dDay == null} ? (dDay + '일째 사랑중') : '187일째 사랑중'"></div> -->
-
-        <a th:href="@{/notifications/list}" class="notification" aria-label="알림">
-            🔔 <span id="noti-badge">0</span>
-        </a>
-    </header>
-
-    <!-- ✅ main은 하나만 -->
-    <main>
-        <div th:if="${notMatched}" class="card">
-            <p>아직 커플이 매칭되지 않았어요!</p>
-            <a th:href="@{/invite/code}" class="btn-primary">초대코드 발급하기</a>
-            <a th:href="@{/invite}" class="btn-primary">커플 매칭하러 가기</a>
+        <div class="right">
+          <a th:href="@{/notifications/list}" class="bell" aria-label="알림">
+            🔔 <span id="noti-badge" class="badge">0</span>
+          </a>
         </div>
+      </header>
 
-        <div class="side-features">
-            <a th:href="@{/question}" class="side-feature">오늘의 문답</a>
-            <a th:href="@{/diary}" class="side-feature">다이어리</a>
-            <a th:href="@{/bucket}" class="side-feature">버킷리스트</a>
+      <!-- 기능 타일 -->
+      <section class="card">
+        <div class="feature-grid">
+          <a th:href="@{/question}" class="tile"><div class="ico">📝</div>오늘의 문답</a>
+          <a th:href="@{/diary}"   class="tile"><div class="ico">📔</div>다이어리</a>
+          <a th:href="@{/bucket}"  class="tile"><div class="ico">🎯</div>버킷리스트</a>
         </div>
+      </section>
 
-        <div class="middle-section">
-            <div style="background-color:#fff8fa;border-radius:12px;display:inline-block;padding:8px;">
-                <img src="https://file.miricanvas.com/template_thumb/2025/02/12/16/30/k31jmfoct1o60ops/thumb.webp?size=400"
-                    alt="캐릭터 이미지" style="display:block;border-radius:12px;">
-            </div>
-            <p>오늘의 미션 완료하고 사랑을 충전해볼까요?</p>
+      <!-- 히어로 -->
+      <section class="hero">
+        <div class="imgwrap">
+          <!-- 임시 이미지: 필요시 교체 -->
+          <img src="https://file.miricanvas.com/template_thumb/2025/02/12/16/30/k31jmfoct1o60ops/thumb.webp?size=800"
+               alt="SAI 캐릭터">
         </div>
-    </main>
+        <p>오늘의 미션 완료하고 사랑을 충전해볼까요?</p>
+      </section>
 
-    <div class="footer">
-        <a th:href="@{/schedule}">캘린더</a>
-        <a th:href="@{/chat/room}" target="_blank">채팅</a>
-        <a th:href="@{'/video/test'(roomId=${roomId}, userId=${userId})}" target="_blank">영상통화</a>
-        <a th:href="@{/decorate}">홈 꾸미기</a>
-        <a th:href="@{/logout}">로그아웃</a>
-        <a th:href="@{/setting}">설정</a>
+      <!-- (optional) 커플 매칭 안내 카드 -->
+      <section class="card" th:if="${notMatched}">
+        <p style="margin:0 0 10px; font-weight:800;">아직 커플이 매칭되지 않았어요!</p>
+        <div style="display:flex; gap:10px;">
+          <a th:href="@{/invite/code}" class="tile" style="flex:1; height:48px;">초대코드</a>
+          <a th:href="@{/invite}" class="tile" style="flex:1; height:48px;">커플 매칭</a>
+        </div>
+      </section>
+
     </div>
+  </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
-    <script>
-        let stompClient;
+  <!-- 하단 탭바 -->
+  <nav class="tabbar">
+    <a th:href="@{/schedule}" class="tab"><div class="t-ico">📅</div>캘린더</a>
+    <a th:href="@{/chat/room}" class="tab" target="_blank"><div class="t-ico">💬</div>채팅</a>
+    <a th:href="@{'/video/test'(roomId=${roomId}, userId=${userId})}" class="tab" target="_blank"><div class="t-ico">🎥</div>영상통화</a>
+    <a th:href="@{/decorate}" class="tab"><div class="t-ico">🏠</div>홈 꾸미기</a>
+    <a th:href="@{/setting}" class="tab active"><div class="t-ico">⚙️</div>설정</a>
+  </nav>
 
-        function connectStomp() {
-            const sock = new SockJS("/ws-chat");
-            stompClient = Stomp.over(sock);
-            stompClient.connect({}, () => {
-                stompClient.subscribe('/user/queue/notifications', (frame) => {
-                    const badge = document.getElementById('noti-badge');
-                    const current = parseInt(badge.textContent || '0', 10);
-                    badge.textContent = current + 1;
-                });
-            });
-        }
-
-        window.addEventListener('DOMContentLoaded', connectStomp);
-    </script>
-
+  <!-- 알림 뱃지/실시간 구독 -->
+  <script>
+    async function updateBadge(){
+      try{
+        const res = await fetch('/api/notifications');
+        const data = await res.json();
+        const unread = (data||[]).filter(n => !n.isRead).length;
+        const el = document.getElementById('noti-badge');
+        if(el) el.textContent = unread;
+      }catch(e){ console.error('알림 불러오기 실패', e); }
+    }
+    window.addEventListener('DOMContentLoaded', updateBadge);
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+  <script>
+    let stompClient;
+    function connectStomp(){
+      const sock = new SockJS("/ws-chat");
+      stompClient = Stomp.over(sock);
+      stompClient.connect({}, () => {
+        stompClient.subscribe('/user/queue/notifications', () => {
+          const badge = document.getElementById('noti-badge');
+          const cur = parseInt(badge.textContent || '0', 10);
+          badge.textContent = cur + 1;
+        });
+      });
+    }
+    window.addEventListener('DOMContentLoaded', connectStomp);
+  </script>
 </body>
-
 </html>

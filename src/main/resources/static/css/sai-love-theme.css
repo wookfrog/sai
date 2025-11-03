@@ -283,53 +283,57 @@
 
 /* 스플래시 */
 :root {
-  --grad-top: #d94f9b;   /* 인스타 상단 핑크 */
-  --grad-mid: #c471ed;   /* 보라 */
-  --grad-bot: #fcb045;   /* 오렌지 */
-  --shadow: 0 8px 24px rgba(0,0,0,.15);
+  --grad-start: #ff9a9e;  /* 연핑크 */
+  --grad-mid: #fecfef;    /* 파스텔 핑크 */
+  --grad-end: #fbc2eb;    /* 연보라 */
+  --shadow: 0 8px 24px rgba(0,0,0,.12);
+  --text-main: #8a3e7a;   /* 포인트 글씨 */
+  --text-sub: #5f5f5f;    /* 서브 텍스트 */
 }
 
-/* 인스타 느낌 그라데이션 스플래시 */
-.splash-instagram {
-  min-height: 100dvh;
+/* 배경 */
+.splash {
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
   text-align: center;
-  background: linear-gradient(160deg, var(--grad-top), var(--grad-mid), var(--grad-bot));
-  color: #fff;
+  background: linear-gradient(160deg, #ff9a9e 0%, #fecfef 50%, #a18cd1 100%);
+  position: relative;
+  overflow: hidden;
 }
 
 /* 로고 */
-.sai-logo {
-  margin-bottom: 40px;
+.logo-symbol {
+  width: 160px;
+  margin-bottom: 14px;
 }
-.sai-logo img {
-  width: 140px;
-  height: auto;
-  filter: drop-shadow(0 6px 12px rgba(0,0,0,.25));
+
+.wordmark {
+  font-size: 48px;
+  font-weight: 800;
+  color: #9c2f6a;
+  margin-bottom: 6px;
+}
+
+.tagline {
+  font-size: 18px;
+  color: rgba(255,255,255,0.9);
+  margin-bottom: 30px;
 }
 
 /* 버튼 */
-.btn {
+.btn-primary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  height: 48px;
-  padding: 0 28px;
+  height: 50px;
+  padding: 0 36px;
   border-radius: 999px;
-  border: none;
-  cursor: pointer;
-  font-weight: 800;
-  font-size: 1rem;
+  background: linear-gradient(135deg, #ff7eb3, #ff758c);
+  color: #fff;
+  font-weight: 700;
   text-decoration: none;
-  box-shadow: var(--shadow);
-}
-.btn-primary {
-  background: #fff;
-  color: #d94f9b;
-}
-.btn-lg {
-  font-size: 1.1rem;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.12);
 }

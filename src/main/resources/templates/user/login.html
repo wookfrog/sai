@@ -1,39 +1,134 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SAI – 로그인</title>
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="/css/sai-love-theme.css?v=1" th:href="@{/css/sai-love-theme.css}">
-    <style>
-    
-    </style>
+  <!-- 공용 테마 변수 사용 (이미 있으면 그대로 두고, 없으면 주석 CSS 참고) -->
+  <link rel="stylesheet" href="/css/sai-love-theme.css?v=1" th:href="@{/css/sai-love-theme.css?v=1}"/>
+
+  <style>
+    /* --- 테마 변수 없으면 아래 6줄만 임시로 살려도 됨 ---
+    :root{
+      --grad-start:#ff9a9e; --grad-mid:#fecfef; --grad-end:#fbc2eb;
+      --text:#2b2b2b; --sub:#8b8f98; --border:#eceff3; --white:#fff;
+      --shadow:0 18px 50px rgba(121,58,120,.12);
+    }/* ----------------------------------------------- */
+
+    html,body{height:100%;margin:0;color:var(--text);font-family: 'Noto Sans KR', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;}
+
+    /* 배경: 사랑스러운 그라데이션 + 은은한 빛 번짐 */
+    .auth-bg{
+      min-height:100dvh; display:flex; align-items:center; justify-content:center;
+      padding:24px;
+      background: radial-gradient(1200px 900px at 20% 10%, rgba(255,255,255,.25), transparent 60%),
+                  radial-gradient(900px 700px at 90% 90%, rgba(255,255,255,.18), transparent 60%),
+                  linear-gradient(160deg, var(--grad-start), var(--grad-mid) 45%, var(--grad-end));
+    }
+
+    /* 카드(글래스) */
+    .auth-card{
+      width:min(420px, 94vw);
+      background: rgba(255,255,255,.75);
+      backdrop-filter: blur(10px);
+      border:1px solid rgba(255,255,255,.6);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      padding: 28px 22px 22px;
+    }
+
+    /* 상단 로고 */
+    .brand{
+      display:flex; flex-direction:column; align-items:center; gap:10px; margin-bottom: 6px;
+    }
+    .brand .logo{
+      width:72px; height:72px; border-radius:50%;
+      display:grid; place-items:center;
+      background: rgba(255,255,255,.65);
+      box-shadow: inset 0 2px 18px rgba(255,255,255,.55);
+    }
+    .brand svg{ width:40px; height:40px; display:block; }
+    .brand .title{ font-size:22px; font-weight:900; letter-spacing:.4px; color:#7d3a82; }
+    .brand .subtitle{ font-size:12px; color:var(--sub); }
+
+    /* 폼 */
+    .form{
+      margin-top: 18px; display:flex; flex-direction:column; gap:14px;
+    }
+    .field{ display:flex; flex-direction:column; gap:6px; }
+    .field label{ font-size:13px; color:var(--sub); font-weight:700; }
+    .input{
+      height:46px; padding:0 14px; border-radius:12px;
+      border:1px solid var(--border); background:#fff; font-size:15px;
+      outline:none;
+    }
+    .input:focus{ border-color:#d6b0ff; box-shadow:0 0 0 4px rgba(214,176,255,.25); }
+
+    .submit{
+      height:48px; border:0; border-radius:14px; cursor:pointer;
+      font-weight:900; color:#fff; font-size:16px;
+      background: linear-gradient(135deg, #a18cd1, #fbc2eb);
+      box-shadow: 0 10px 24px rgba(161,140,209,.26);
+    }
+
+    /* 에러 메시지 */
+    .error{
+      background: #fff2f4; color:#d12a55; border:1px solid #ffd6de;
+      padding:10px 12px; border-radius:12px; font-size:13px; margin-top:10px;
+    }
+
+    /* 하단 링크/버튼 */
+    .links{ margin-top: 14px; display:flex; gap:10px; }
+    .btn-ghost, .btn-line{
+      flex:1; height:44px; display:inline-flex; align-items:center; justify-content:center;
+      border-radius:12px; font-weight:800; text-decoration:none; cursor:pointer;
+    }
+    .btn-ghost{ background:#fff; border:1px solid var(--border); color:#7b4fa8; }
+    .btn-line{ background: linear-gradient(135deg, rgba(255,255,255,.55), rgba(255,255,255,.35)); color:#5b50b6; border:1px solid rgba(255,255,255,.7); }
+
+    /* 반응형 */
+    @media (min-width:560px){
+      .auth-card{ padding: 32px 26px 24px; }
+    }
+  </style>
 </head>
 
 <body>
-    <div class="loginWrapper">
-        <div class="login_box">
-            <div class="title">
-                <h2>로그인</h2>
-            </div>
-            <p th:if="${errorMessage}" th:text="${errorMessage}" style="color:red;"></p>
-            <form method="post" action="/login">
-                <label>ID</label>
-                <input type="text" name="loginId" placeholder="아이디를 입력하세요">
-                <label>PW</label>
-                <input type="password" name="password" placeholder="비밀번호를 입력하세요">
-                <button type="submit">로그인</button>
-            </form>
-
-            <!-- 🔻 로그인 form 밖으로 이동 -->
-            <div class="etc-links">
-                <a th:href="@{/user/register}" class="linkButton">회원가입</a>
-                <a th:href="@{/SNSlogin}" class="snsButton">SNS 로그인</a>
-            </div>
+  <main class="auth-bg">
+    <section class="auth-card">
+      <!-- 브랜드 -->
+      <div class="brand">
+        <div class="logo">
+          <!-- 퍼즐 하트 아이콘 (투명 PNG가 있으면 <img src="/img/SAI_logo_transparent.png"> 로 교체 가능) -->
+         <img src="/src/sai_logo.png" alt="">
         </div>
-    </div>
-</body>
+        <div class="title">SAI</div>
+        <div class="subtitle">Special stories between us</div>
+      </div>
 
+      <!-- 에러 -->
+      <p class="error" th:if="${errorMessage}" th:text="${errorMessage}"></p>
+
+      <!-- 폼 -->
+      <form class="form" method="post" action="/login">
+        <div class="field">
+          <label for="loginId">아이디</label>
+          <input id="loginId" class="input" type="text" name="loginId" placeholder="아이디를 입력하세요" autocomplete="username"/>
+        </div>
+        <div class="field">
+          <label for="password">비밀번호</label>
+          <input id="password" class="input" type="password" name="password" placeholder="비밀번호를 입력하세요" autocomplete="current-password"/>
+        </div>
+        <button type="submit" class="submit">로그인</button>
+      </form>
+
+      <!-- 하단 링크 -->
+      <div class="links">
+        <a th:href="@{/user/register}" class="btn-ghost">회원가입</a>
+        <a th:href="@{/SNSlogin}" class="btn-line">SNS 로그인</a>
+      </div>
+    </section>
+  </main>
+</body>
 </html>

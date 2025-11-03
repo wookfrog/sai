@@ -1,110 +1,126 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>회원가입</title>
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SAI · 회원가입</title>
+  <link rel="stylesheet" href="/css/sai-love-theme.css?v=1" th:href="@{/css/sai-love-theme.css?v=1}" />
+  <style>
+    :root {
+      --grad-start: #ff9a9e;
+      --grad-mid: #fecfef;
+      --grad-end: #fbc2eb;
+      --shadow: 0 18px 50px rgba(121, 58, 120, .12);
+    }
 
-        body {
-            margin: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f0f2f5;
-        }
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      font-family: 'Noto Sans KR', sans-serif;
+    }
 
-        .register_container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            padding: 0 20px;
-        }
+    .auth-bg {
+      min-height: 100dvh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: linear-gradient(160deg, var(--grad-start), var(--grad-mid) 45%, var(--grad-end));
+    }
 
-        .form {
-            width: 100%;
-            max-width: 350px;
-            padding: 30px 20px;
-            border: 1px solid #ccc;
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
+    .auth-card {
+      width: min(420px, 94vw);
+      background: rgba(255, 255, 255, .85);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 28px 24px;
+      box-shadow: var(--shadow);
+    }
 
-        h2 {
-            text-align: center;
-            margin-bottom: 25px;
-            color: #333;
-        }
+    h2 {
+      text-align: center;
+      margin: 0 0 20px;
+      color: #7d3a82;
+      font-weight: 900;
+    }
 
-        label {
-            display: block;
-            margin-bottom: 6px;
-            font-weight: bold;
-            color: #444;
-        }
+    .form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
 
-        input,
-        select {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 14px;
-        }
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
 
-        button {
-            margin-top: 10px;
-            width: 100%;
-            padding: 12px;
-            background-color: #FE94A0;
-            color: white;
-            font-size: 16px;
-            font-weight: bold;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
+    label {
+      font-size: 14px;
+      font-weight: 700;
+      color: #555;
+    }
 
-        button:hover {
-            background-color: #0056b3;
-        }
-    </style>
+    input,
+    select {
+      height: 46px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      padding: 0 12px;
+      font-size: 15px;
+    }
+
+    button {
+      margin-top: 10px;
+      height: 48px;
+      border: 0;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #a18cd1, #fbc2eb);
+      color: #fff;
+      font-weight: 900;
+      font-size: 16px;
+      cursor: pointer;
+      box-shadow: 0 10px 24px rgba(161, 140, 209, .26);
+    }
+  </style>
 </head>
 
 <body>
-    <div class="register_container">
-        <div class="form">
-            <h2>회원가입</h2>
-            <form th:action="@{/user/register}" method="post">
-                <label for="loginId">아이디</label>
-                <input type="text" id="loginId" name="loginId" required>
-
-                <label for="password">비밀번호</label>
-                <input type="password" id="password" name="password" required>
-
-                <label for="nickname">닉네임</label>
-                <input type="text" id="nickname" name="nickname" required>
-
-                <label for="gender">성별</label>
-                <select name="gender" id="gender" required>
-                    <option value="">선택</option>
-                    <option value="male">남자</option>
-                    <option value="female">여자</option>
-                </select>
-
-                <label for="birth">생년월일</label>
-                <input type="date" id="birth" name="birth">
-
-                <button type="submit">회원가입</button>
-            </form>
+  <main class="auth-bg">
+    <section class="auth-card">
+      <h2>회원가입</h2>
+      <form class="form" th:action="@{/user/register}" method="post">
+        <div class="field">
+          <label for="loginId">아이디</label>
+          <input type="text" id="loginId" name="loginId" required>
         </div>
-    </div>
+        <div class="field">
+          <label for="password">비밀번호</label>
+          <input type="password" id="password" name="password" required>
+        </div>
+        <div class="field">
+          <label for="nickname">닉네임</label>
+          <input type="text" id="nickname" name="nickname" required>
+        </div>
+        <div class="field">
+          <label for="gender">성별</label>
+          <select name="gender" id="gender" required>
+            <option value="">선택</option>
+            <option value="male">남자</option>
+            <option value="female">여자</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="birth">생년월일</label>
+          <input type="date" id="birth" name="birth">
+        </div>
+        <button type="submit">회원가입</button>
+      </form>
+    </section>
+  </main>
 </body>
 
 </html>
